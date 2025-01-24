@@ -6,8 +6,6 @@ import {
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
   Accordion,
   AccordionHeader,
   AccordionBody,
@@ -179,29 +177,20 @@ export function SidebarWithBurgerMenu() {
           >
             <CubeTransparentIcon className="mb-4 h-12 w-12" />
             <Typography variant="h6" className="mb-1">
-              Upgrade to PRO
+              Disclaimer !
             </Typography>
             <Typography variant="small" className="font-normal opacity-80">
-              Upgrade to Material Tailwind PRO and get even more components,
-              plugins, advanced features and premium.
+              This is an app for demonstration purposes only. Please do not use this as a real medical assitant App. Always consult a doctor for medical advice.
             </Typography>
             <div className="mt-4 flex gap-3">
               <Typography
                 as="a"
                 href="#"
                 variant="small"
-                className="font-medium opacity-80"
+                className="font-medium"
                 onClick={() => setOpenAlert(false)}
               >
                 Dismiss
-              </Typography>
-              <Typography
-                as="a"
-                href="#"
-                variant="small"
-                className="font-medium"
-              >
-                Upgrade Now
               </Typography>
             </div>
           </Alert>
