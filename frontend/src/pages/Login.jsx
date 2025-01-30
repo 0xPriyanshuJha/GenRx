@@ -1,84 +1,72 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import axios from "axios";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+const Login = () => {
+  const [userID, setUserID] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
-
-  const validateForm = () => {
-    if (!username || !password) {
-      setError('Username and password are required');
-      return false;
-    }
-    setError('');
-    return true;
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!validateForm()) return;
-    setLoading(true);
-
-    const formDetails = new URLSearchParams();
-    formDetails.append('username', username);
-    formDetails.append('password', password);
-
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formDetails,
+      const response = await axios.post("http://localhost:8000/login", {
+        username: userID,
+        password: password,
       });
-
-      setLoading(false);
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        navigate('/protected');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.detail || 'Authentication failed!');
-      }
+      localStorage.setItem("token", response.data.access_token);
+      setMessage("Login successful!");
     } catch (error) {
-      setLoading(false);
-      setError('An error occurred. Please try again later.');
+      setMessage("Login failed: " + error.response.data.detail);
     }
   };
 
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/google-auth?code=${credentialResponse.credential}`
+      );
+      localStorage.setItem("token", response.data.access_token);
+      setMessage("Google Login successful!");
+    } catch (error) {
+      setMessage("Google Login failed");
+    }
+  };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
+    <div className="flex h-screen items-center justify-center bg-gray-100">
+      <div className="w-96 p-6 bg-white rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold text-center mb-4">Login</h2>
+        {message && <p className="text-center text-red-500">{message}</p>}
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            placeholder="User ID"
+            value={userID}
+            onChange={(e) => setUserID(e.target.value)}
+            className="w-full p-2 border rounded-lg"
           />
-        </div>
-        <div>
-          <label>Password:</label>
           <input
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 border rounded-lg"
           />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+          >
+            Login
+          </button>
+        </form>
+        <div className="text-center my-4 text-gray-500">OR</div>
+        <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+          <GoogleLogin onSuccess={handleGoogleLogin} onError={() => console.log("Login Failed")} />
+        </GoogleOAuthProvider>
+      </div>
     </div>
   );
-}
+};
 
 export default Login;

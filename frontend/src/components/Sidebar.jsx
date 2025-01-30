@@ -155,7 +155,7 @@ export function SidebarWithBurgerMenu() {
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
-                    <Link to="/" className="text-blue-gray-700">
+                    <Link to="/Diet" className="text-blue-gray-700">
                       Diet Plan
                     </Link>
                   </ListItem>
