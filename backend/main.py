@@ -1,49 +1,34 @@
-from fastapi import FastAPI, HTTPException, Depends, File, UploadFile
-from pydantic import BaseModel
-from auth import google_authenticate  # Import Google authentication function
-from llm import analyze_prescription, analyze_scan, generate_management_plan  # Import LLM functions
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from scan_analysis import router as scan_router
+from prescription_analysis import router as prescription_router
+from chat_service import router as chat_router
 
-app = FastAPI()
+app = FastAPI(title="Healthcare AI API")
 
-class Prescription(BaseModel):
-    prescription_text: str
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class PatientData(BaseModel):
-    age: int
-    medical_history: str
-    current_conditions: str
-    daily_metrics: dict  # Example: {"blood_sugar": 120, "blood_pressure": "130/85"}
+app.include_router(scan_router, prefix="/api/analyze", tags=["scan"])
+app.include_router(prescription_router, prefix="/api/analyze", tags=["prescription"])
+app.include_router(chat_router, prefix="/api/chat", tags=["chat"])
 
-# Route to authenticate user with Google OAuth2
-@app.post("/api/auth/google")
-async def google_auth(token: dict):
-    user_info = google_authenticate(token["token"])
-    return {"message": "Login successful", "user": user_info}
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "models": {
+            "vision": "Ollama Vision Model",
+            "chat": "Ollama Llama3.1"
+        }
+    }
 
-# Route for prescription analysis
-@app.post("/api/analyze_prescription")
-async def analyze_prescription_endpoint(prescription: Prescription):
-    try:
-        result = analyze_prescription(prescription.prescription_text)
-        return {"message": "Prescription analysis successful", "analysis": result}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
-
-# Route for scan analysis (upload scan image)
-@app.post("/api/analyze_scan")
-async def analyze_scan_endpoint(file: UploadFile = File(...)):
-    try:
-        scan_analysis = analyze_scan(file)
-        report = generate_management_plan(scan_analysis)
-        return {"message": "Scan analysis successful", "report": report}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
-
-# Route for chronic disease management
-@app.post("/api/chronic_disease_management")
-async def chronic_disease_management_endpoint(patient_data: PatientData):
-    try:
-        plan = generate_management_plan(patient_data.dict())
-        return {"message": "Chronic disease management plan generated", "plan": plan}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -62,7 +62,9 @@ export function SidebarWithBurgerMenu() {
               className="h-8 w-8"
             />
             <Typography variant="h5" color="blue-gray">
-              Sidebar
+              <Link to="/"> GenRx
+              </Link>
+              
             </Typography>
           </div>
           <div className="p-2">
@@ -151,24 +153,10 @@ export function SidebarWithBurgerMenu() {
                       Chronic Disease Management
                     </Link>
                   </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    <Link to="/Diet" className="text-blue-gray-700">
-                      Diet Plan
-                    </Link>
-                  </ListItem>
                 </List>
               </AccordionBody>
             </Accordion>
             <hr className="my-2 border-blue-gray-50" />
-            <ListItem>
-              <ListItemPrefix>
-                <PowerIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Log Out
-            </ListItem>
           </List>
           <Alert
             open={openAlert}
@@ -180,7 +168,9 @@ export function SidebarWithBurgerMenu() {
               Disclaimer !
             </Typography>
             <Typography variant="small" className="font-normal opacity-80">
-              This is an app for demonstration purposes only. Please do not use this as a real medical assitant App. Always consult a doctor for medical advice.
+              This is an app for demonstration purposes only. Please do not use
+              this as a real medical assistant App. Always consult a doctor for
+              medical advice.
             </Typography>
             <div className="mt-4 flex gap-3">
               <Typography

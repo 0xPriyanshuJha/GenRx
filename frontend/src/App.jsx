@@ -8,12 +8,9 @@ import Hero from "./pages/Hero";
 function App() {
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
       <div className="fixed z-50">
         <Sidebar />
       </div>
-
-      {/* Main Content */}
       <div className="flex-1 ml-16">
         <Routes>
           <Route path="/" element={<Hero />} />
