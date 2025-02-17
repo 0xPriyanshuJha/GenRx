@@ -39,7 +39,7 @@ const Chronic = () => {
     <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       {/* Chat Header */}
       <div className="bg-blue-600 text-white text-center py-3 font-semibold">
-        AI Nutrition Assistant
+        Chronic Disease Management
       </div>
 
       {/* Messages Container */}
